@@ -4,6 +4,9 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+
 	"github.com/S-a-b-r/url-shortener/internal/config"
 	"github.com/S-a-b-r/url-shortener/internal/lib/logger/sl"
 	"github.com/S-a-b-r/url-shortener/internal/storage/sqlite"
@@ -19,19 +22,20 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	log.Info("starting url shortener", slog.String("env", cfg.Env))
-	log.Debug("debug messages are enabled")
 
 	db, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
 		log.Error("error opening db", sl.Err(err))
 		os.Exit(1)
 	}
-	_ = db
 
-	// TODO: init config: cleanenv
-	// TODO: init logger: slog
-	// TODO: init storage: sqlight
-	// TODO: init router : chi
+	router := chi.NewRouter()
+
+	// middleware
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+
 	// TODO: run server
 }
 
