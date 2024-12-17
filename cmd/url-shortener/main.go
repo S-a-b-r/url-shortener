@@ -2,12 +2,14 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/S-a-b-r/url-shortener/internal/config"
+	"github.com/S-a-b-r/url-shortener/internal/http-server/handlers/save"
 	mwLogger "github.com/S-a-b-r/url-shortener/internal/http-server/middleware"
 	"github.com/S-a-b-r/url-shortener/internal/lib/logger/handlers/slogpretty"
 	"github.com/S-a-b-r/url-shortener/internal/lib/logger/sl"
@@ -31,13 +33,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	res, err := db.SaveURL("https://testUrl3rwer3243333", "https://te3st3")
-	if err != nil {
-		log.Error("error saving url", sl.Err(err))
-		os.Exit(1)
-	}
-	log.Debug("res", slog.Int64("resSaveUrl", res))
-
 	router := chi.NewRouter()
 
 	// middleware
@@ -48,7 +43,23 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	// TODO: run server
+	router.Post("/url", save.New(log, db))
+
+	log.Info("starting server", slog.String("address", cfg.HTTPServer.Address))
+
+	srv := &http.Server{
+		Addr:         cfg.HTTPServer.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+	}
+
+	if err = srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("oops, something wrong")
 }
 
 func setupLogger(env string) *slog.Logger {
