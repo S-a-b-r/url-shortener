@@ -22,6 +22,19 @@ const (
 	envProd = "prod"
 )
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server Petstore server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@test.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @servers.url https://petstore.example.com/api/v3
+
 func main() {
 	cfg := config.MustLoad()
 	log := setupLogger(cfg.Env)
@@ -44,6 +57,10 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
+	// @tag.name Work with url
+
+	// @success      200              {string}  string    "ok"
+	// @router /url [post]
 	router.Route("/url", func(r chi.Router) {
 		r.Use(middleware.BasicAuth("url-shortener", map[string]string{
 			cfg.HTTPServer.Username: cfg.HTTPServer.Password,

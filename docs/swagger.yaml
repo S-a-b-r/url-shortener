@@ -1,0 +1,41 @@
+definitions:
+  response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        example: 200
+        maximum: 600
+        minimum: 100
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@test.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Petstore server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /{alias}:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+  /url:
+    post:
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+swagger: "2.0"
+tags:
+- name: Work with url

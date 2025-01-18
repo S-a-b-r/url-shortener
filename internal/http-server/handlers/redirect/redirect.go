@@ -17,6 +17,9 @@ type URLGetter interface {
 	GetURL(alias string) (string, error)
 }
 
+// @Success      200              {object}  response.Response
+// @Router /{alias} [post]
+
 func New(log *slog.Logger, getter URLGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.redirect.New"
